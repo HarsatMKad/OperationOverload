@@ -6,35 +6,49 @@ using System.Threading.Tasks;
 
 namespace ConsoleApp1
 {
-    class SquareMatrix
+  class SquareMatrix : ICloneable
   {
     private int Dimension;
     public SquareMatrix(int Dimension)
     {
-      this.Dimension = Dimension;
+      if (Dimension <= 0)
+      {
+        throw new InvalidMatrixException(Dimension.ToString());
+      }
+      else
+      {
+        this.Dimension = Dimension;
+      }
     }
-    public int[,] Matrix = new int[100, 100];
+
+  public int[,] Matrix = new int[100, 100];
 
     public void CreateMatrix()
     {
       Random RandomNumber = new Random();
-      for (int Line = 0; Line < Dimension; ++Line)
+      for (int RowIndex1 = 0; RowIndex1 < Dimension; ++RowIndex1)
       {
-        for (int Column = 0; Column < Dimension; ++Column)
+        for (int ClolumnIndex = 0; ClolumnIndex < Dimension; ++ClolumnIndex)
         {
-          Matrix[Line, Column] = RandomNumber.Next(0, 10);
+          Matrix[RowIndex1, ClolumnIndex] = RandomNumber.Next(0, 10);
         }
       }
+    }
+
+    public object Clone()
+    {
+      SquareMatrix DeepCloneMatrix = new SquareMatrix(this.Dimension);
+      return DeepCloneMatrix;
     }
 
     public static SquareMatrix operator + (SquareMatrix MatrixA, SquareMatrix MatrixB)
     {
       SquareMatrix Answer = new SquareMatrix(MatrixA.Dimension);
-      for (int Line = 0; Line < MatrixA.Dimension; ++Line)
+      for (int RowIndex1 = 0; RowIndex1 < MatrixA.Dimension; ++RowIndex1)
       {
-        for (int Column = 0; Column < MatrixA.Dimension; ++Column)
+        for (int ClolumnIndex = 0; ClolumnIndex < MatrixA.Dimension; ++ClolumnIndex)
         {
-          Answer.Matrix[Line, Column] = MatrixA.Matrix[Line, Column] + MatrixB.Matrix[Line, Column];
+          Answer.Matrix[RowIndex1, ClolumnIndex] = MatrixA.Matrix[RowIndex1, ClolumnIndex] + MatrixB.Matrix[RowIndex1, ClolumnIndex];
         }
       }
       return Answer;
@@ -43,13 +57,13 @@ namespace ConsoleApp1
     public static SquareMatrix operator * (SquareMatrix MatrixA, SquareMatrix MatrixB)
     {
       SquareMatrix Answer = new SquareMatrix(MatrixA.Dimension);
-      for (int Line = 0; Line < MatrixA.Dimension; ++Line)
+      for (int RowIndex1 = 0; RowIndex1 < MatrixA.Dimension; ++RowIndex1)
       {
-        for (int Column = 0; Column < MatrixA.Dimension; ++Column)
+        for (int ClolumnIndex = 0; ClolumnIndex < MatrixA.Dimension; ++ClolumnIndex)
         {
-          for(int k = 0; k < MatrixA.Dimension; ++k)
+          for(int MultiplicationIndex = 0; MultiplicationIndex < MatrixA.Dimension; ++MultiplicationIndex)
           {
-            Answer.Matrix[Line, Column] = MatrixA.Matrix[Line, k] * MatrixB.Matrix[k, Column];
+            Answer.Matrix[RowIndex1, ClolumnIndex] = MatrixA.Matrix[RowIndex1, MultiplicationIndex] * MatrixB.Matrix[MultiplicationIndex, ClolumnIndex];
           }
         }
       }
@@ -59,11 +73,11 @@ namespace ConsoleApp1
     public static explicit operator double[][](SquareMatrix MatrixA)
     {
       double[][] Answer = new double[MatrixA.Dimension][];
-      for (int Line = 0; Line < MatrixA.Dimension; ++Line)
+      for (int RowIndex1 = 0; RowIndex1 < MatrixA.Dimension; ++RowIndex1)
       {
-        for (int Column = 0; Column < MatrixA.Dimension; ++Column)
+        for (int ClolumnIndex = 0; ClolumnIndex < MatrixA.Dimension; ++ClolumnIndex)
         {
-          Answer[Line][Column] = MatrixA.Matrix[Line, Column];
+          Answer[RowIndex1][ClolumnIndex] = MatrixA.Matrix[RowIndex1, ClolumnIndex];
         }
       }
       return Answer;
@@ -71,79 +85,51 @@ namespace ConsoleApp1
 
     public static bool operator > (SquareMatrix MatrixA, SquareMatrix MatrixB)
     {
-      double[][] doubMatrix1 = (double[][])MatrixA;
-      double[][] doubMatrix2 = (double[][])MatrixB;
-      double detA = ConsoleApp2.Gaus.MatrixDeterminant(doubMatrix1);
-      double detB = ConsoleApp2.Gaus.MatrixDeterminant(doubMatrix2);
+      double[][] doubleMatrix1 = (double[][])MatrixA;
+      double[][] doubleMatrix2 = (double[][])MatrixB;
+      double detA = ConsoleApp2.Gaus.MatrixDeterminant(doubleMatrix1);
+      double detB = ConsoleApp2.Gaus.MatrixDeterminant(doubleMatrix2);
 
-      if(detA > detB)
-      {
-        return true;
-      }
-      else
-      {
-        return false;
-      }
+      return (detA > detB);
     }
 
     public static bool operator < (SquareMatrix MatrixA, SquareMatrix MatrixB)
     {
-      double[][] doubMatrix1 = (double[][])MatrixA;
-      double[][] doubMatrix2 = (double[][])MatrixB;
-      double detA = ConsoleApp2.Gaus.MatrixDeterminant(doubMatrix1);
-      double detB = ConsoleApp2.Gaus.MatrixDeterminant(doubMatrix2);
+      double[][] doubleMatrix1 = (double[][])MatrixA;
+      double[][] doubleMatrix2 = (double[][])MatrixB;
+      double detA = ConsoleApp2.Gaus.MatrixDeterminant(doubleMatrix1);
+      double detB = ConsoleApp2.Gaus.MatrixDeterminant(doubleMatrix2);
 
-      if (detA < detB)
-      {
-        return true;
-      }
-      else
-      {
-        return false;
-      }
+      return (detA < detB);
     }
 
     public static bool operator >= (SquareMatrix MatrixA, SquareMatrix MatrixB)
     {
-      double[][] doubMatrix1 = (double[][])MatrixA;
-      double[][] doubMatrix2 = (double[][])MatrixB;
-      double detA = ConsoleApp2.Gaus.MatrixDeterminant(doubMatrix1);
-      double detB = ConsoleApp2.Gaus.MatrixDeterminant(doubMatrix2);
+      double[][] doubleMatrix1 = (double[][])MatrixA;
+      double[][] doubleMatrix2 = (double[][])MatrixB;
+      double detA = ConsoleApp2.Gaus.MatrixDeterminant(doubleMatrix1);
+      double detB = ConsoleApp2.Gaus.MatrixDeterminant(doubleMatrix2);
 
-      if (detA >= detB)
-      {
-        return true;
-      }
-      else
-      {
-        return false;
-      }
+      return (detA >= detB);
     }
 
     public static bool operator <= (SquareMatrix MatrixA, SquareMatrix MatrixB)
     {
-      double[][] doubMatrix1 = (double[][])MatrixA;
-      double[][] doubMatrix2 = (double[][])MatrixB;
-      double detA = ConsoleApp2.Gaus.MatrixDeterminant(doubMatrix1);
-      double detB = ConsoleApp2.Gaus.MatrixDeterminant(doubMatrix2);
+      double[][] doubleMatrix1 = (double[][])MatrixA;
+      double[][] doubleMatrix2 = (double[][])MatrixB;
+      double detA = ConsoleApp2.Gaus.MatrixDeterminant(doubleMatrix1);
+      double detB = ConsoleApp2.Gaus.MatrixDeterminant(doubleMatrix2);
 
-      if (detA <= detB)
-      {
-        return true;
-      }
-      else
-      {
-        return false;
-      }
+      return (detA <= detB);
     }
 
     public static bool operator == (SquareMatrix MatrixA, SquareMatrix MatrixB)
     {
-      for (int Line = 0; Line < MatrixA.Dimension; ++Line)
+      for (int RowIndex1 = 0; RowIndex1 < MatrixA.Dimension; ++RowIndex1)
       {
-        for (int Column = 0; Column < MatrixA.Dimension; ++Column)
+        for (int ClolumnIndex = 0; ClolumnIndex < MatrixA.Dimension; ++ClolumnIndex)
         {
-          if(MatrixA.Matrix[Line, Column] != MatrixB.Matrix[Line, Column])
+          if(MatrixA.Matrix[RowIndex1, ClolumnIndex] != MatrixB.Matrix[RowIndex1, ClolumnIndex])
           {
             return false;
           }
@@ -154,11 +140,11 @@ namespace ConsoleApp1
 
     public static bool operator != (SquareMatrix MatrixA, SquareMatrix MatrixB)
     {
-      for (int Line = 0; Line < MatrixA.Dimension; ++Line)
+      for (int RowIndex1 = 0; RowIndex1 < MatrixA.Dimension; ++RowIndex1)
       {
-        for (int Column = 0; Column < MatrixA.Dimension; ++Column)
+        for (int ClolumnIndex = 0; ClolumnIndex < MatrixA.Dimension; ++ClolumnIndex)
         {
-          if (MatrixA.Matrix[Line, Column] == MatrixB.Matrix[Line, Column])
+          if (MatrixA.Matrix[RowIndex1, ClolumnIndex] == MatrixB.Matrix[RowIndex1, ClolumnIndex])
           {
             return false;
           }
@@ -169,11 +155,11 @@ namespace ConsoleApp1
 
     public static bool operator true (SquareMatrix MatrixA)
     {
-      for (int Line = 0; Line < MatrixA.Dimension; ++Line)
+      for (int RowIndex1 = 0; RowIndex1 < MatrixA.Dimension; ++RowIndex1)
       {
-        for (int Column = 0; Column < MatrixA.Dimension; ++Column)
+        for (int ClolumnIndex = 0; ClolumnIndex < MatrixA.Dimension; ++ClolumnIndex)
         {
-          if(MatrixA.Matrix[Line, Column] != 1)
+          if(MatrixA.Matrix[RowIndex1, ClolumnIndex] == 0)
           {
             return false;
           }
@@ -182,20 +168,19 @@ namespace ConsoleApp1
       return true;
     }
 
-
     public static bool operator false (SquareMatrix MatrixA)
     {
-      for (int Line = 0; Line < MatrixA.Dimension; ++Line)
+      for (int RowIndex1 = 0; RowIndex1 < MatrixA.Dimension; ++RowIndex1)
       {
-        for (int Column = 0; Column < MatrixA.Dimension; ++Column)
+        for (int ClolumnIndex = 0; ClolumnIndex < MatrixA.Dimension; ++ClolumnIndex)
         {
-          if (MatrixA.Matrix[Line, Column] != 0)
+          if (MatrixA.Matrix[RowIndex1, ClolumnIndex] != 0)
           {
             return false;
           }
         }
       }
-        return true;
+      return true;
     }
 
     public static double Detdeterminant(SquareMatrix MatrixA)
@@ -209,21 +194,21 @@ namespace ConsoleApp1
     public static double[][] InversesMatrix(SquareMatrix MatrixA)
     {
       double[][] Answer = new double[MatrixA.Dimension][];
-      for (int Line = 0; Line < MatrixA.Dimension; ++Line)
+      for (int RowIndex1 = 0; RowIndex1 < MatrixA.Dimension; ++RowIndex1)
       {
-        for (int Column = 0; Column < MatrixA.Dimension; ++Column)
+        for (int ClolumnIndex = 0; ClolumnIndex < MatrixA.Dimension; ++ClolumnIndex)
         {
-          Answer[Line][Column] = MatrixA.Matrix[Column, Line];
+          Answer[RowIndex1][ClolumnIndex] = MatrixA.Matrix[ClolumnIndex, RowIndex1];
         }
       }
 
       double Detdeterminant = ConsoleApp2.Gaus.MatrixDeterminant(Answer);
 
-      for (int Line = 0; Line < MatrixA.Dimension; ++Line)
+      for (int RowIndex1 = 0; RowIndex1 < MatrixA.Dimension; ++RowIndex1)
       {
-        for (int Column = 0; Column < MatrixA.Dimension; ++Column)
+        for (int ClolumnIndex = 0; ClolumnIndex < MatrixA.Dimension; ++ClolumnIndex)
         {
-          Answer[Line][Column] /= Detdeterminant;
+          Answer[RowIndex1][ClolumnIndex] /= Detdeterminant;
         }
       }
       return Answer;
@@ -250,11 +235,11 @@ namespace ConsoleApp1
     {
       string strResult = "";
 
-      for (int Line = 0; Line < Dimension; ++Line)
+      for (int RowIndex1 = 0; RowIndex1 < Dimension; ++RowIndex1)
       {
-        for (int Column = 0; Column < Dimension; ++Column)
+        for (int ClolumnIndex = 0; ClolumnIndex < Dimension; ++ClolumnIndex)
         {
-          strResult += Matrix[Line, Column].ToString();
+          strResult += Matrix[RowIndex1, ClolumnIndex].ToString();
         }
       }
       return strResult;
@@ -273,15 +258,20 @@ namespace ConsoleApp1
 
     public void Display()
     {
-      for (int Line = 0; Line < Dimension; ++Line)
+      for (int RowIndex1 = 0; RowIndex1 < Dimension; ++RowIndex1)
       {
-        for (int Column = 0; Column < Dimension; ++Column)
+        for (int ClolumnIndex = 0; ClolumnIndex < Dimension; ++ClolumnIndex)
         {
-          Console.Write(Matrix[Line, Column] + " ");
+          Console.Write(Matrix[RowIndex1, ClolumnIndex] + " ");
         }
         Console.WriteLine("\n");
       }
     }
+  }
+  public class InvalidMatrixException : System.Exception
+  {
+    public InvalidMatrixException(string WrongDimension)
+        : base("невозможно создать матрицу размером " + WrongDimension){ }
   }
 
   public class Singleton
@@ -297,20 +287,40 @@ namespace ConsoleApp1
     public void MatrixCalculator()
     {
       int Dimension;
-      Console.WriteLine("введите размерность матриц: ");
+      bool Key = true;
+      string Operation;
+
+      Console.WriteLine("укажите размерность матриц: ");
       Dimension = Convert.ToInt32(Console.ReadLine());
+
+      while (Key)
+      {
+        Key = false;
+        try
+        {
+          SquareMatrix TextMatrix = new SquareMatrix(Dimension);
+        }
+        catch (InvalidMatrixException Error)
+        {
+          Console.WriteLine("Ошибка: " + Error.Message);
+          Key = true;
+          Dimension = Convert.ToInt32(Console.ReadLine());
+        }
+      }
 
       Console.WriteLine("первая матрица:");
       SquareMatrix matrix1 = new SquareMatrix(Dimension);
+
       matrix1.CreateMatrix();
       matrix1.Display();
 
       Console.WriteLine("вторая матрица:");
-      SquareMatrix matrix2 = new SquareMatrix(Dimension);
+      SquareMatrix matrix2 = (SquareMatrix)matrix1.Clone();
+
       matrix2.CreateMatrix();
       matrix2.Display();
 
-      string Operation;
+      Console.WriteLine("+, *, determ, invers, >, <, >=, <=, ==, !=, true, false, equals, hash, string, compare");
       Console.WriteLine("какую операцию необходимо выполнить: ");
       Operation = Convert.ToString(Console.ReadLine());
 
@@ -333,11 +343,11 @@ namespace ConsoleApp1
 
         case "invers":
           double[][] invers = SquareMatrix.InversesMatrix(matrix1);
-          for (int Line = 0; Line < Dimension; ++Line)
+          for (int RowIndex1 = 0; RowIndex1 < Dimension; ++RowIndex1)
           {
-            for (int Column = 0; Column < Dimension; ++Column)
+            for (int ClolumnIndex = 0; ClolumnIndex < Dimension; ++ClolumnIndex)
             {
-              Console.Write(invers[Line][Column] + " ");
+              Console.Write(invers[RowIndex1][ClolumnIndex] + " ");
             }
             Console.WriteLine("\n");
           }
